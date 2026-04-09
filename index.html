@@ -94,6 +94,33 @@
   }
 
   /* PHOTO */
+  .hero-photo-name {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+.photo-name {
+  font-family: var(--serif);
+  font-size: 1.8rem;
+  color: var(--text);
+  letter-spacing: 0.08em;
+}
+.photo-role {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+.hero-photo-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;  /* ← this is the space between photo and name */
+  flex-shrink: 0;
+}
+
   .hero-photo-wrap {
     position: relative;
     width: 220px; flex-shrink: 0;
@@ -503,7 +530,7 @@
 
 <nav>
   <div class="inner">
-    <span class="nav-logo">// engineer.profile</span>
+    <span class="nav-logo">Sepide Taleb</span>
     <ul class="nav-links">
       <li><a href="#about">About</a></li>
       <li><a href="#skills">Skills</a></li>
@@ -542,8 +569,13 @@
           </div>
         </div>
       </div>
-      <div class="hero-photo-wrap">
-        <img class="hero-photo" id="hero-img" src="images/SepideTaleb.jpg" alt="Profile photo">
+      <div class="hero-photo-col">
+       <div class="hero-photo-wrap">
+         <img class="hero-photo" id="hero-img" src="images/SepideTaleb.jpg" alt="Profile photo">
+       </div>
+       <div class="hero-photo-name">
+           <span class="photo-name">Sepide Taleb</span>
+       </div>
       </div>
       <input type="file" id="photo-input" accept="image/*">
     </div>
