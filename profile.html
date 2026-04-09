@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — Project Engineer & Robotics Researcher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e28;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8eaf0;
+    --muted: #7a8099;
+    --accent: #4fd1a5;
+    --accent2: #7b68ee;
+    --accent3: #f0845c;
+    --gold: #e8c66a;
+    --serif: 'DM Serif Display', serif;
+    --sans: 'Sora', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* Grid noise texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79,209,165,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,209,165,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    backdrop-filter: blur(20px);
+    background: rgba(13,15,20,0.85);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 0;
+  }
+  nav .inner {
+    max-width: 900px; margin: 0 auto; padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.05em; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 13px; color: var(--muted); text-decoration: none;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* Offset anchor targets so fixed nav doesn't cover them */
+  section[id] { scroll-margin-top: 80px; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 8rem 0 4rem;
+    position: relative;
+  }
+
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4rem;
+    align-items: center;
+    width: 100%;
+  }
+
+  /* PHOTO */
+  .hero-photo-wrap {
+    position: relative;
+    width: 220px; flex-shrink: 0;
+  }
+  .hero-photo-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: conic-gradient(var(--accent), var(--accent2), var(--accent3), var(--accent));
+    z-index: 0;
+    animation: spin 8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .hero-photo-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: var(--bg);
+    z-index: 1;
+  }
+  .hero-photo {
+    position: relative; z-index: 2;
+    width: 214px; height: 214px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+  /* SVG placeholder shown when no real photo */
+  .hero-photo-placeholder {
+    position: relative; z-index: 2;
+    width: 214px; height: 214px;
+    border-radius: 50%;
+    background: var(--surface2);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 8px; cursor: pointer;
+    border: 2px dashed var(--border2);
+    transition: border-color 0.2s;
+    overflow: hidden;
+  }
+  .hero-photo-placeholder:hover { border-color: var(--accent); }
+  .placeholder-icon {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .placeholder-icon svg { width: 28px; height: 28px; fill: var(--muted); }
+  .placeholder-body {
+    width: 80px; height: 50px; border-radius: 40px 40px 0 0;
+    background: var(--surface);
+    position: absolute; bottom: -10px;
+  }
+  .placeholder-hint {
+    font-size: 11px; font-family: var(--mono);
+    color: var(--muted); letter-spacing: 0.05em;
+    text-align: center; line-height: 1.5;
+    position: absolute; bottom: 30px;
+  }
+  #photo-input { display: none; }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(79,209,165,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 12px;
+    color: var(--accent); letter-spacing: 0.08em;
+    border: 1px solid rgba(79,209,165,0.3);
+    padding: 6px 14px; border-radius: 100px;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+    display: block;
+  }
+
+  .hero-sub {
+    font-size: 16px; color: var(--muted);
+    max-width: 520px; line-height: 1.8;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-links {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px; border-radius: 8px;
+    font-size: 14px; font-weight: 500;
+    text-decoration: none; letter-spacing: 0.02em;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .btn-primary {
+    background: var(--accent); color: #0d1a14;
+    border: 1px solid var(--accent);
+  }
+  .btn-primary:hover { background: #38c08e; transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent; color: var(--text);
+    border: 1px solid var(--border2);
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hero-meta {
+    margin-top: 4rem; padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    display: flex; gap: 3rem; flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+  .meta-item label {
+    display: block; font-size: 11px; font-family: var(--mono);
+    color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;
+  }
+  .meta-item span { font-size: 14px; font-weight: 500; color: var(--text); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTIONS */
+  section { padding: 5rem 0; }
+
+  .section-label {
+    font-family: var(--mono); font-size: 11px;
+    color: var(--accent); letter-spacing: 0.15em;
+    text-transform: uppercase; margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: var(--border);
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 3rem;
+    line-height: 1.15;
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: start;
+  }
+  .about-text p { color: var(--muted); line-height: 1.9; margin-bottom: 1rem; }
+  .about-text p:last-child { margin-bottom: 0; }
+
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem;
+    transition: border-color 0.2s;
+  }
+  .stat-card:hover { border-color: var(--border2); }
+  .stat-num {
+    font-family: var(--serif); font-size: 2.5rem;
+    color: var(--accent); line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label { font-size: 12px; color: var(--muted); }
+
+  /* SKILLS */
+  #skills { background: var(--surface); }
+
+  .skills-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .skill-group {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.75rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .skill-group:hover { border-color: var(--border2); transform: translateY(-2px); }
+
+  .skill-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; margin-bottom: 1rem;
+  }
+  .icon-teal { background: rgba(79,209,165,0.12); }
+  .icon-purple { background: rgba(123,104,238,0.12); }
+  .icon-coral { background: rgba(240,132,92,0.12); }
+
+  .skill-group h3 {
+    font-size: 13px; font-weight: 600;
+    color: var(--text); margin-bottom: 1rem;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    font-family: var(--mono);
+  }
+
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    font-size: 12px; padding: 4px 10px;
+    border-radius: 100px;
+    font-family: var(--mono);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .tag:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* EXPERIENCE */
+  .timeline { position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 0; top: 8px; bottom: 0;
+    width: 1px; background: var(--border);
+  }
+
+  .timeline-item {
+    padding-left: 2.5rem; padding-bottom: 3rem; position: relative;
+  }
+  .timeline-item:last-child { padding-bottom: 0; }
+
+  .timeline-dot {
+    position: absolute; left: -5px; top: 6px;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+
+  .timeline-period {
+    font-family: var(--mono); font-size: 11px;
+    color: var(--accent); letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .timeline-role {
+    font-size: 18px; font-weight: 600; margin-bottom: 2px;
+  }
+
+  .timeline-org {
+    font-size: 14px; color: var(--muted); margin-bottom: 1rem;
+  }
+
+  .timeline-bullets { list-style: none; }
+  .timeline-bullets li {
+    font-size: 14px; color: var(--muted);
+    padding: 4px 0; padding-left: 1.25rem;
+    position: relative;
+    line-height: 1.6;
+  }
+  .timeline-bullets li::before {
+    content: '→';
+    position: absolute; left: 0;
+    color: var(--accent); font-size: 12px;
+  }
+
+  /* PROJECTS */
+  #projects { background: var(--surface); }
+
+  .projects-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .project-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.75rem;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .project-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .project-card:hover::before { opacity: 1; }
+
+  .project-title { font-weight: 600; margin-bottom: 0.75rem; font-size: 15px; }
+  .project-desc { font-size: 13px; color: var(--muted); margin-bottom: 1rem; line-height: 1.7; }
+  .project-stack { display: flex; gap: 6px; flex-wrap: wrap; }
+  .stack-tag {
+    font-family: var(--mono); font-size: 11px;
+    padding: 3px 8px; border-radius: 4px;
+    background: rgba(79,209,165,0.08);
+    color: var(--accent); border: 1px solid rgba(79,209,165,0.2);
+  }
+
+  /* EDUCATION */
+  .edu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+  .edu-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.75rem;
+    transition: border-color 0.2s;
+  }
+  .edu-card:hover { border-color: var(--border2); }
+
+  .edu-degree {
+    font-family: var(--serif); font-size: 1.3rem;
+    margin-bottom: 0.5rem; line-height: 1.25;
+    color: var(--gold);
+  }
+  .edu-field { font-size: 13px; color: var(--text); margin-bottom: 0.75rem; }
+  .edu-meta { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+
+  /* LANGUAGES */
+  .lang-grid { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .lang-pill {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px; padding: 10px 20px;
+  }
+  .lang-name { font-weight: 500; font-size: 14px; }
+  .lang-level {
+    font-size: 11px; font-family: var(--mono);
+    color: var(--muted); letter-spacing: 0.05em;
+  }
+  .lang-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-native { background: var(--accent); }
+  .dot-pro { background: var(--accent2); }
+  .dot-int { background: var(--accent3); }
+
+  /* CONTACT */
+  #contact {
+    background: linear-gradient(135deg, rgba(79,209,165,0.05) 0%, rgba(123,104,238,0.05) 100%);
+    border-top: 1px solid var(--border);
+    text-align: center; padding: 6rem 0;
+  }
+  #contact .section-title { margin-bottom: 1rem; }
+  #contact p { color: var(--muted); margin-bottom: 2.5rem; }
+  #contact .hero-links { justify-content: center; }
+
+  .contact-info {
+    display: flex; gap: 3rem; justify-content: center;
+    margin-top: 3rem; flex-wrap: wrap;
+  }
+  .contact-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .contact-item label {
+    font-family: var(--mono); font-size: 11px;
+    color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .contact-item span { font-size: 14px; color: var(--text); }
+
+  /* FOOTER */
+  footer {
+    text-align: center; padding: 2rem;
+    border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--muted);
+    font-family: var(--mono);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .about-grid, .skills-grid, .projects-grid, .edu-grid { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+    .hero h1 { font-size: 2.8rem; }
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero-photo-wrap { width: 160px; margin: 0 auto; order: -1; }
+    .hero-photo, .hero-photo-placeholder { width: 154px !important; height: 154px !important; }
+  }
+
+  /* Scroll reveal */
+  .reveal { opacity: 0; transform: translateY(30px); transition: all 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <span class="nav-logo">// engineer.profile</span>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-tag">Available for opportunities</div>
+        <h2>
+          Project Engineer<br>
+          Robotics & Data Enthusiast<br>
+          Electrical Engineer <br>
+        </h2>
+        <p class="hero-sub">
+          PhD in Smart Materials Engineering. Building systems where hardware, software, and data converge. From embedded robotics to AI-powered automation.</p>
+        <div class="hero-links">
+          <a href="#contact" class="btn btn-primary">Get in touch →</a>
+          <a href="#experience" class="btn btn-ghost">View experience</a>
+        </div>
+        <div class="hero-meta">
+          <div class="meta-item">
+            <label>Location</label>
+            <span>Groningen, Nederland</span>
+          </div>
+          <div class="meta-item">
+            <label>Current role</label>
+            <span>Research & Education Officer @ RUG</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-photo-wrap">
+        <img class="hero-photo" id="hero-img" src="images/SepideTaleb.jpg" alt="Profile photo">
+      </div>
+      <input type="file" id="photo-input" accept="image/*">
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="container">
+    <div class="section-label">About</div>
+    <div class="about-grid reveal">
+      <div class="about-text">
+        <p>
+Results-driven Electrical Engineer with a Ph.D. in Smart Materials Engineering, and hands-on experience in robotics, embedded systems, and data-driven engineering solutions, robotic system development (ROS2), AI-enabled applications, combining hardware, software, and data to deliver functional systems.        </p>
+        <p>
+Currently working as Research and Education Officer at the University of Groningen, running scientific laboratories, mentoring bachelor/master/PhD engineers, and effectively communicating complex technical concepts to diverse audiences. Passionate about innovation, continuous learning, and exploring emerging technologies, with a strong focus on coding, data analysis, robotics, and the integration of AI-driven solutions.         </p>
+        <p>
+Thrive in collaborative, dynamic environments, leveraging creativity and technical expertise to solve complex challenges. Committed to contributing to impactful projects that drive societal progress, with a focus on roles that value responsibility, precision, and loyalty.        </p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-num">6+</div>
+          <div class="stat-label">Years at RUG</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Languages spoken</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">PhD</div>
+          <div class="stat-label">Smart Materials Eng.</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">130+</div>
+          <div class="stat-label">Citation of research articles</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="container">
+    <div class="section-label">Skills</div>
+    <h2 class="section-title">Technical expertise</h2>
+    <div class="skills-grid reveal">
+
+      <div class="skill-group">
+        <div class="skill-icon icon-teal">⚙️</div>
+        <h3>Engineering</h3>
+        <div class="skill-tags">
+          <span class="tag">System design</span>
+          <span class="tag">Prototyping</span>
+          <span class="tag">Validation</span>
+          <span class="tag">MATLAB</span>
+          <span class="tag">COMSOL</span>
+          <span class="tag">Altium Designer</span>
+          <span class="tag">SolidWorks</span>
+          <span class="tag">AutoCAD</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <div class="skill-icon icon-purple">🤖</div>
+        <h3>Robotics & Embedded</h3>
+        <div class="skill-tags">
+          <span class="tag">ROS2</span>
+          <span class="tag">Arduino</span>
+          <span class="tag">Ubuntu / Linux</span>
+          <span class="tag">PCB Design</span>
+          <span class="tag">Sensors</span>
+          <span class="tag">Actuators</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <div class="skill-icon icon-coral">🧠</div>
+        <h3>AI & Automation</h3>
+        <div class="skill-tags">
+          <span class="tag">Docker</span>
+          <span class="tag">n8n</span>
+          <span class="tag">LLM APIs</span>
+          <span class="tag">LangChain</span>
+          <span class="tag">Amazon Cloud</span>
+          <span class="tag">Ollama</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <div class="skill-icon icon-teal">💻</div>
+        <h3>Programming</h3>
+        <div class="skill-tags">
+          <span class="tag">Python</span>
+          <span class="tag">NumPy</span>
+          <span class="tag">Pandas</span>
+          <span class="tag">Matplotlib</span>
+          <span class="tag">Seaborn</span>
+          <span class="tag">PostgreSQL</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <div class="skill-icon icon-purple">📊</div>
+        <h3>Data & Visualisation</h3>
+        <div class="skill-tags">
+          <span class="tag">Power BI</span>
+          <span class="tag">Excel</span>
+          <span class="tag">Origin</span>
+          <span class="tag">Dashboards</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <div class="skill-icon icon-coral">🔬</div>
+        <h3>Research</h3>
+        <div class="skill-tags">
+          <span class="tag">Piezoelectric sensors</span>
+          <span class="tag">MEMS/NEMS</span>
+          <span class="tag">Microfabrication</span>
+          <span class="tag">Experimental design</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="container">
+    <div class="section-label">Experience</div>
+    <h2 class="section-title">Work history</h2>
+    <div class="timeline reveal">
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-period">2024 — Present</div>
+        <div class="timeline-role">Research and Education Officer</div>
+        <div class="timeline-org">Rijksuniversiteit Groningen (RUG)</div>
+        <ul class="timeline-bullets">
+          <li>Coordinating and supporting student projects (BSc, MSc, PhD) including technical progress, planning, and deliverables</li>
+          <li>Collaborating with researchers and technical staff to develop experimental setups and system solutions</li>
+          <li>Laboratory management and ensuring safe equipment usage</li>
+          <li>Technical mentorship focused on robotics, embedded systems, and hardware implementation</li>
+          <li>Designed and built a PCB for an AI robot with sensors and communication modules</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-period">2019 — 2024</div>
+        <div class="timeline-role">PhD Researcher — Smart Materials Engineering</div>
+        <div class="timeline-org">Rijksuniversiteit Groningen (RUG)</div>
+        <ul class="timeline-bullets">
+          <li>Developed piezoelectric sensors and actuators from design through experimental validation</li>
+          <li>Designed and developed a high-voltage poling system for material processing</li>
+          <li>Worked within a multidisciplinary international team</li>
+          <li>Presented results in conferences and collaborated with multiple research groups</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-period">2015 — 2017</div>
+        <div class="timeline-role">Research Assistant — MEMS Lab</div>
+        <div class="timeline-org">Amirkabir University of Technology (AUT), New Technologies Research Center</div>
+        <ul class="timeline-bullets">
+          <li>Worked in a microfabrication lab developing MEMS/NEMS processes for sensor and actuator applications</li>
+          <li>Designed and built a MEMS accelerometer</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="container">
+    <div class="section-label">Projects</div>
+    <h2 class="section-title">Selected work</h2>
+    <div class="projects-grid reveal">
+
+      <div class="project-card">
+        <div class="project-title">Multi-Document RAG Q&A System</div>
+        <div class="project-desc">Retrieval-Augmented Generation pipeline for querying multiple documents simultaneously with semantic search.</div>
+        <div class="project-stack">
+          <span class="stack-tag">Python</span>
+          <span class="stack-tag">IBM Watsonx</span>
+          <span class="stack-tag">LangChain</span>
+          <span class="stack-tag">Chroma</span>
+          <span class="stack-tag">Gradio</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-title">AI Email Automation System</div>
+        <div class="project-desc">End-to-end intelligent email processing and automation using workflow orchestration and LLM integration.</div>
+        <div class="project-stack">
+          <span class="stack-tag">n8n</span>
+          <span class="stack-tag">LLM API</span>
+          <span class="stack-tag">Docker</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-title">Interactive AI Chatbot</div>
+        <div class="project-desc">Interactive AI chatbot with an animated graphical interface running on a local language model, featuring Text-to-Speech and Speech-to-Text.</div>
+        <div class="project-stack">
+          <span class="stack-tag">Python</span>
+          <span class="stack-tag">Ollama</span>
+          <span class="stack-tag">TTS</span>
+          <span class="stack-tag">STT</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-title">Piezoelectric Data Parser</div>
+        <div class="project-desc">Python application for parsing and analysing experimental data from Excel files, enabling fast, repeatable analysis of piezoelectric materials.</div>
+        <div class="project-stack">
+          <span class="stack-tag">Python</span>
+          <span class="stack-tag">Pandas</span>
+          <span class="stack-tag">Matplotlib</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-title">Garmin Health Dashboard</div>
+        <div class="project-desc">Visualized Garmin watch data by extracting, processing, and transforming health metrics </div>
+        <div class="project-stack">
+          <span class="stack-tag">Power BI</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-title">EV Auto Trend Dashboard</div>
+        <div class="project-desc">Interactive dashboards in Power BI to compare trends over time in electric, hybrid, petrol, and diesel vehicle adoption.</div>
+        <div class="project-stack">
+          <span class="stack-tag">Power BI</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="education">
+  <div class="container">
+    <div class="section-label">Education</div>
+    <h2 class="section-title">Academic background</h2>
+    <div class="edu-grid reveal">
+
+      <div class="edu-card">
+        <div class="edu-degree">PhD</div>
+        <div class="edu-field">Smart Materials Engineering</div>
+        <div class="edu-meta">Rijksuniversiteit Groningen · 2019–2023</div>
+      </div>
+
+      <div class="edu-card">
+        <div class="edu-degree">M.Sc.</div>
+        <div class="edu-field">Mechatronics Engineering</div>
+        <div class="edu-meta">Amirkabir University of Technology, Tehran · 2012–2015</div>
+      </div>
+
+      <div class="edu-card">
+        <div class="edu-degree">B.Sc.</div>
+        <div class="edu-field">Control Engineering</div>
+        <div class="edu-meta">IUST, Tehran · 2008–2012</div>
+      </div>
+
+    </div>
+
+    <div style="margin-top: 3rem;">
+      <div class="section-label" style="margin-bottom: 1.5rem;">Languages</div>
+      <div class="lang-grid reveal">
+        <div class="lang-pill">
+          <div class="lang-dot dot-native"></div>
+          <div>
+            <div class="lang-name">Persian</div>
+            <div class="lang-level">Native</div>
+          </div>
+        </div>
+        <div class="lang-pill">
+          <div class="lang-dot dot-pro"></div>
+          <div>
+            <div class="lang-name">English</div>
+            <div class="lang-level">Professional</div>
+          </div>
+        </div>
+        <div class="lang-pill">
+          <div class="lang-dot dot-int"></div>
+          <div>
+            <div class="lang-name">Dutch</div>
+            <div class="lang-level">Intermediate</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="container">
+    <div class="section-label" style="justify-content: center; margin-bottom: 1rem;">Contact</div>
+    <h2 class="section-title">Let's work together</h2>
+    <p>Interested in collaboration, research, or engineering challenges? I'd love to connect.</p>
+    <div class="hero-links">
+      <a href="mailto:sepide.taleb@gmail.com" class="btn btn-primary">Send an email →</a>
+      <a href="https://nl.linkedin.com/in/sepide-taleb" class="btn btn-ghost">LinkedIn profile</a>
+    </div>
+    <div class="contact-info">
+      <div class="contact-item">
+        <label>Phone</label>
+        <span>+31 639767666</span>
+      </div>
+      <div class="contact-item">
+        <label>Email</label>
+        <span>sepide.taleb@gmail.com</span>
+      </div>
+      <div class="contact-item">
+        <label>Location</label>
+        <span>Groningen, Nederland</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Built with care · Groningen, 2025</span>
+</footer>
+
+<script>
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+reveals.forEach(el => observer.observe(el));
+
+// Photo upload
+document.getElementById('photo-input').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const img = document.getElementById('hero-img');
+    img.src = ev.target.result;
+    img.style.display = 'block';
+    document.getElementById('photo-placeholder').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+});
+</script>
+</body>
+</html>
